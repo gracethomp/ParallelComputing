@@ -1,11 +1,12 @@
 package com.kpi;
 
 public class SumThread extends Thread{
-    private long[][] matrixA;
+    private short[][] matrixA;
+    private long sum;
     private int startIndex;
     private int endIndex;
     public SumThread(){}
-    public SumThread(long[][] matrixA, int startIndex, int endIndex){
+    public SumThread(short[][] matrixA, int startIndex, int endIndex){
         this.matrixA = matrixA;
         this.startIndex = startIndex;
         this.endIndex = endIndex;
@@ -14,9 +15,13 @@ public class SumThread extends Thread{
     @Override
     public void run() {
         for (int i = startIndex; i < endIndex; i++) {
-            for (int j = 0; j < matrixA.length; j++){
-                Main.increaseSum(matrixA[i][j]);
+            for (int j = 0; j < matrixA[i].length; j++) {
+                sum += matrixA[i][j];
             }
         }
+    }
+
+    public long getSum() {
+        return sum;
     }
 }

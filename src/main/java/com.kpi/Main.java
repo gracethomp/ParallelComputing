@@ -1,44 +1,41 @@
 package com.kpi;
 
-import java.util.Scanner;
+import java.util.Random;
 
 public class Main {
-    private static volatile long sum = 0;
+    private static long sum = 0;
 
     public static void main(String[] args) throws InterruptedException {
-        int n = 150, m = 150, numberOfThreads = 1;
-        Scanner sc = new Scanner(System.in);
-        //n = sc.nextInt();
-        //m = sc.nextInt();
-        long[][] array = new long[n][m];
+        int n = 45000, m = 45000, numberOfThreads = 100;
+        short[][] array = new short[n][m];
+        Random rand = new Random();
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                array[i][j] = (long) ((Math.random() * (1000 - 1)) + 1);
+                array[i][j] = (short) rand.nextInt(100);
             }
         }
-        for (int i = 0; i < n; i++) {
-            //System.out.println(Arrays.toString(array[i]));
-        }
+        long currentTime = System.nanoTime();
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 sum += array[i][j];
             }
         }
-        System.out.println(sum);
+        System.out.println(System.nanoTime() - currentTime);
+        System.out.println("Single thread sum: " + sum);
         sum = 0;
         SumThread[] sumThread = new SumThread[numberOfThreads];
+        currentTime = System.nanoTime();
+        int numRowsPerThread = array.length / numberOfThreads;
         for (int i = 0; i < numberOfThreads; i++) {
-            sumThread[i] = new SumThread(array, m/numberOfThreads * i,
-                    i == (numberOfThreads - 1) ? m : m / numberOfThreads * (i + 1));
+            sumThread[i] = new SumThread(array, i * numRowsPerThread,
+                    (i == numberOfThreads - 1) ? array.length : (i + 1) * numRowsPerThread);
             sumThread[i].start();
         }
         for (int i = 0; i < numberOfThreads; i++) {
             sumThread[i].join();
+            sum += sumThread[i].getSum();
         }
-        System.out.println(sum);
-    }
-
-    public static synchronized void increaseSum(long a) {
-        sum += a;
+        System.out.println(System.nanoTime() - currentTime);
+        System.out.println("Multithreading sum: " + sum);
     }
 }
