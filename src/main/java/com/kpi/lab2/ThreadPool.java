@@ -30,16 +30,6 @@ public class ThreadPool extends Thread{
         });
     }
 
-    public void pause() {
-        isPaused = true;
-    }
-
-    public void resumeWork() {
-        System.out.println(taskQueue);
-        isPaused = false;
-
-    }
-
     public void addTask(Runnable task) {
         taskQueue.addTask(task);
     }

@@ -18,7 +18,8 @@ public class ExampleUsage {
         threadPool.shutdown();
         System.out.println("Testing is ended. The count of threads: " + countOfThreads);
         System.out.println("The average time of executing tasks: " + ((double) timeTaskExecuting/countOfThreads));
-        System.out.println("Queue size: " + threadPool.getTaskQueue().getMainBuffer().size());
+        System.out.println("Queue size (main): " + threadPool.getTaskQueue().getMainBuffer().size());
+        System.out.println("Queue size (second): " + threadPool.getTaskQueue().getSecondBuffer().size());
         System.exit(0);
     }
 
