@@ -1,4 +1,4 @@
-package com.kpi.lab2_1;
+package com.kpi.lab2;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
