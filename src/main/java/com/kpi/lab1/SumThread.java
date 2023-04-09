@@ -1,4 +1,4 @@
-package com.kpi;
+package com.kpi.lab1;
 
 public class SumThread extends Thread{
     private short[][] matrixA;
