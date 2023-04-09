@@ -59,14 +59,16 @@ public class TaskQueue extends Thread{
     public void run() {
         while (!isInterrupted()) {
             try {
-                System.out.println(mainBuffer);
                 System.out.println("you can add tasks");
                 Thread.sleep(45000);
                 isOpenForAdding = false;
                 System.out.println("you can't add tasks");
                 System.out.println("tasks are executing");
-                startWork();
+                //System.out.println(mainBuffer);
+                while (!mainBuffer.isEmpty()){
+                }
                 mainBuffer.addAll(secondBuffer);
+                secondBuffer.clear();
                 isOpenForAdding = true;
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);

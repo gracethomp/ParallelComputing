@@ -1,31 +1,40 @@
 package com.kpi.lab2_1;
 
-public class ThreadPool {
+import java.util.ArrayList;
+import java.util.List;
+
+public class ThreadPool extends Thread{
     private final TaskQueue taskQueue = new TaskQueue();
-    private final Thread[] threads;
+    private final List<Thread> threads;
     private volatile boolean isPaused = false;
 
     public ThreadPool(int threadCount) {
-        threads = new Thread[threadCount];
+        threads = new ArrayList<>(threadCount);
 
-//        for (int i = 0; i < threadCount; i++) {
-//            threads[i] = new WorkerThread();
-//            threads[i].start();
-//        }
+        for (int i = 0; i < threadCount; i++) {
+            threads.add(new WorkerThread());
+        }
     }
 
-    public void start() {
-        for (int i = 0; i < threads.length; i++) {
-            threads[i] = new WorkerThread();
-            threads[i].start();
-        }
+    @Override
+    public void run() {
+        taskQueue.start();
+        threads.forEach(Thread::start);
+
+        threads.forEach(worker -> {
+            try {
+                worker.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public void pause() {
         isPaused = true;
     }
 
-    public void resume() {
+    public void resumeWork() {
         System.out.println(taskQueue);
         isPaused = false;
 
@@ -39,7 +48,10 @@ public class ThreadPool {
         for (Thread thread : threads) {
             thread.interrupt();
         }
-        taskQueue.clear();
+    }
+
+    public TaskQueue getTaskQueue() {
+        return taskQueue;
     }
 
     private class WorkerThread extends Thread {
@@ -48,9 +60,7 @@ public class ThreadPool {
             while (!isInterrupted()) {
                 try {
                     Runnable task = taskQueue.remove();
-                    if (!isPaused) {
-                        task.run();
-                    }
+                    task.run();
                 } catch (InterruptedException e) {
                     interrupt();
                 }
