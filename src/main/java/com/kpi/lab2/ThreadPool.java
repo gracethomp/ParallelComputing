@@ -2,6 +2,7 @@ package com.kpi.lab2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
 
 public class ThreadPool extends Thread{
     private final TaskQueue taskQueue = new TaskQueue();
