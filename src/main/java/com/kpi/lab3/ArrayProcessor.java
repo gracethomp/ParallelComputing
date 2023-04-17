@@ -26,7 +26,7 @@ public class ArrayProcessor {
 
     public static void main(String[] args) throws InterruptedException {
         // Генеруємо масив з випадкових чисел
-        int[] array = new int[1000];
+        int[] array = new int[500000000];
         Random random = new Random();
         for (int i = 0; i < array.length; i++) {
             array[i] = random.nextInt(1000) + 1;
@@ -42,7 +42,16 @@ public class ArrayProcessor {
         System.out.println("Кількість парних чисел: " + counter.getEvenCount());
         System.out.println("Найбільше парне число: " + counter.getMaxEven());
         System.out.println("Час виконання завдання: " + elapsedTime + " мс");
-        doAtomicVersion(array);
+
+        ParallelEvenNumberCounterWithAtomic counter1 = new ParallelEvenNumberCounterWithAtomic(array, 4);
+        long startTime1 = System.nanoTime(); // Запам'ятовуємо початковий час
+        counter1.countEvenNumbers();
+        long endTime1 = System.nanoTime(); // Запам'ятовуємо кінцевий час
+        long elapsedTime1 = endTime1 - startTime1; // Розраховуємо час виконання завдання
+        System.out.println("Кількість парних чисел: " + counter1.getEvenCount());
+        System.out.println("Найбільше парне число: " + counter1.getMaxEven());
+        System.out.println("Час виконання завдання: " + elapsedTime1 + " мс");
+        //doAtomicVersion(array);
     }
     public static void doOneThreadVersion(int[] array){
         int count; // Змінна для підрахунку кількості парних елементів
