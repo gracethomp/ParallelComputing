@@ -1,19 +1,16 @@
 package com.kpi.lab3;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+
 public class ParallelEvenNumberCounter {
     private final int[] arr; // масив
     private final int numThreads; // кількість потоків
     private int evenCount; // лічильник парних чисел
     private int maxEven; // найбільше парне число
-    private final Lock lock; // блокування
 
     public ParallelEvenNumberCounter(int[] arr, int numThreads) {
         this.arr = arr;
         this.numThreads = numThreads;
         this.evenCount = 0;
         this.maxEven = Integer.MIN_VALUE;
-        this.lock = new ReentrantLock();
     }
 
     public void countEvenNumbers() throws InterruptedException {
@@ -64,17 +61,13 @@ public class ParallelEvenNumberCounter {
                     }
                 }
             }
-
-            // Захищаємо доступ до спільних змінних за допомогою блокування
-            lock.lock();
-            try {
+            synchronized (this) {
                 evenCount += localEvenCount;
                 if (localMaxEven > maxEven) {
                     maxEven = localMaxEven;
                 }
-            } finally {
-                lock.unlock();
             }
+            // Захищаємо доступ до спільних змінних за допомогою блокування
         }
     }
 }

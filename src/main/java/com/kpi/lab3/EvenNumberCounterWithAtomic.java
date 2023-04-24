@@ -2,13 +2,13 @@ package com.kpi.lab3;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ParallelEvenNumberCounterWithAtomic {
+public class EvenNumberCounterWithAtomic {
     private final int[] arr; // масив
     private final int numThreads; // кількість потоків
     private final AtomicInteger evenCount; // атомік для лічильника парних чисел
     private final AtomicInteger maxEven; // атомік для найбільшого парного числа
 
-    public ParallelEvenNumberCounterWithAtomic(int[] arr, int numThreads) {
+    public EvenNumberCounterWithAtomic(int[] arr, int numThreads) {
         this.arr = arr;
         this.numThreads = numThreads;
         this.evenCount = new AtomicInteger(0);

@@ -1,7 +1,6 @@
 package com.kpi.lab3;
 
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ArrayProcessor {
     public static int countEvenNumbers(int[] array) {
@@ -43,7 +42,7 @@ public class ArrayProcessor {
         System.out.println("Найбільше парне число: " + counter.getMaxEven());
         System.out.println("Час виконання завдання: " + elapsedTime + " мс");
 
-        ParallelEvenNumberCounterWithAtomic counter1 = new ParallelEvenNumberCounterWithAtomic(array, 4);
+        EvenNumberCounterWithAtomic counter1 = new EvenNumberCounterWithAtomic(array, 4);
         long startTime1 = System.nanoTime(); // Запам'ятовуємо початковий час
         counter1.countEvenNumbers();
         long endTime1 = System.nanoTime(); // Запам'ятовуємо кінцевий час
@@ -51,7 +50,6 @@ public class ArrayProcessor {
         System.out.println("Кількість парних чисел: " + counter1.getEvenCount());
         System.out.println("Найбільше парне число: " + counter1.getMaxEven());
         System.out.println("Час виконання завдання: " + elapsedTime1 + " мс");
-        //doAtomicVersion(array);
     }
     public static void doOneThreadVersion(int[] array){
         int count; // Змінна для підрахунку кількості парних елементів
@@ -64,37 +62,5 @@ public class ArrayProcessor {
         System.out.println("Кількість парних елементів: " + count);
         System.out.println("Найбільше парне число: " + maxEven);
         System.out.println("Час виконання завдання: " + elapsedTime + " мс");
-    }
-    public static void doAtomicVersion(int[] array){
-        int count;
-        int maxEven;
-        long startTime = System.nanoTime(); // Запам'ятовуємо початковий час
-        count = countEvenElementsAtomic(array);
-        maxEven = findMaxEvenAtomic(array);
-        long endTime = System.nanoTime(); // Запам'ятовуємо кінцевий час
-        long elapsedTime = endTime - startTime; // Розраховуємо час виконання завдання
-        System.out.println("Кількість парних елементів: " + count);
-        System.out.println("Найбільше парне число: " + maxEven);
-        System.out.println("Час виконання завдання: " + elapsedTime + " мс");
-    }
-    public static int countEvenElementsAtomic(int[] array) {
-        AtomicInteger count = new AtomicInteger(0); // Атомарна змінна для підрахунку кількості парних елементів
-        for (int num : array) {
-            if (num % 2 == 0) {
-                count.incrementAndGet(); // Збільшуємо лічильник атомарно
-            }
-        }
-        return count.get();
-    }
-
-    public static int findMaxEvenAtomic(int[] array) {
-        AtomicInteger maxEven = new AtomicInteger(Integer.MIN_VALUE); // Атомарна змінна для збереження найбільшого парного числа
-        for (int num : array) {
-            if (num % 2 == 0 && num > maxEven.get()) {
-                // Виконуємо CAS операцію для зміни значення атомарно, якщо знайдене число більше поточного максимуму
-                maxEven.compareAndSet(maxEven.get(), num);
-            }
-        }
-        return maxEven.get();
     }
 }
