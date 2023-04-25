@@ -28,7 +28,7 @@ public class ArrayProcessor {
         int[] array = new int[500000000];
         Random random = new Random();
         for (int i = 0; i < array.length; i++) {
-            array[i] = random.nextInt(1000) + 1;
+            array[i] = random.nextInt(1000000000) + 1;
         }
 
         doOneThreadVersion(array);

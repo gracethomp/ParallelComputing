@@ -64,10 +64,16 @@ public class EvenNumberCounterWithAtomic {
                 }
             }
 
-            // Застосовуємо атоміки для оновлення спільних змінних
-            evenCount.addAndGet(localEvenCount);
-            int finalLocalMaxEven = localMaxEven;
-            maxEven.updateAndGet(currentMax -> Math.max(currentMax, finalLocalMaxEven));
+            int oldValue;
+            int newValue;
+            do {
+                oldValue = evenCount.get();
+                newValue = oldValue + localEvenCount;
+            } while (!evenCount.compareAndSet(oldValue, newValue));
+            do {
+                oldValue = maxEven.get();
+                newValue = Math.max(oldValue, localMaxEven);
+            } while (!maxEven.compareAndSet(oldValue, newValue));
         }
     }
 }
