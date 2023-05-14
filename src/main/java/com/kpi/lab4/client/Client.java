@@ -7,18 +7,32 @@ import java.net.Socket;
 import java.util.Random;
 
 public class Client {
-    public static void main(String[] args) {
-        sendMatrix();
+    private final String HOST;
+    private final int PORT;
+
+    public Client(String host, int port){
+        this.HOST = host;
+        this.PORT = port;
     }
 
-    private static void sendMatrix() {
-        int[][] matrix = generateMatrix(2, 5);
-        try(Socket socket = new Socket("localhost", 6666)) {
+    public void sendMatrix(int n, int m) {
+        int[][] matrix = generateMatrix(n, m);
+        try(Socket socket = new Socket(HOST, PORT)) {
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+
+            System.out.println(dataInputStream.readUTF());
             writeMatrix(dataOutputStream, matrix);
-            System.out.println(dataInputStream.readInt());
+
+            System.out.println(dataInputStream.readUTF());
+            dataOutputStream.writeUTF("start");
+            System.out.println(dataInputStream.readUTF());
+
+            dataOutputStream.writeUTF("get");
+            System.out.println(dataInputStream.readUTF());
+
             dataInputStream.close();
+            dataOutputStream.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -17,7 +17,8 @@ public class Server {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        while (!Thread.currentThread().isInterrupted()){
+        System.out.println("Server is running!");
+        while (true) {
             try {
                 ClientHandler clientHandler = new ClientHandler(serverSocket.accept());
                 System.out.println("A new client is connected...");
