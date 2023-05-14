@@ -27,13 +27,18 @@ public class Client {
             System.out.println(dataInputStream.readUTF());
             dataOutputStream.writeUTF("start");
             System.out.println(dataInputStream.readUTF());
-
-            dataOutputStream.writeUTF("get");
-            System.out.println(dataInputStream.readUTF());
+            while (true) {
+                dataOutputStream.writeUTF("get");
+                String response = dataInputStream.readUTF();
+                System.out.println(response);
+                if (!response.equalsIgnoreCase("In progress"))
+                    break;
+                Thread.sleep(1000);
+            }
 
             dataInputStream.close();
             dataOutputStream.close();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

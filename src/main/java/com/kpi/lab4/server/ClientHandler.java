@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class ClientHandler extends Thread{
     private final Socket socket;
@@ -23,13 +25,23 @@ public class ClientHandler extends Thread{
             outputStream.writeUTF("Data is received. Write 'start'");
             inputStream.readUTF();
 
+            CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> findSum(matrix));
+
             outputStream.writeUTF("Calculation is started, please wait...");
-            int sum = findSum(matrix);
-            inputStream.readUTF();
-            outputStream.writeUTF("Calculation was ended. The result is " + sum);
+            //int sum = findSum(matrix);
+            while (true) {
+                inputStream.readUTF();
+                if(future.isDone()){
+                    outputStream.writeUTF("Calculation was ended. The result is " + future.get());
+                    break;
+                } else {
+                    outputStream.writeUTF("In progress");
+                }
+            }
+
             outputStream.close();
             inputStream.close();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         } finally {
             try {
@@ -53,7 +65,12 @@ public class ClientHandler extends Thread{
         return matrix;
     }
 
-    private int findSum(int[][] matrix) throws IOException {
+    private int findSum(int[][] matrix) {
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         int sum = 0;
         for (int[] ints : matrix) {
             for (int j = 0; j < matrix[0].length; j++) {
