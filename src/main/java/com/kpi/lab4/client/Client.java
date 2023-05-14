@@ -1,4 +1,4 @@
-package com.kpi.lab4;
+package com.kpi.lab4.client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
