@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -24,7 +25,6 @@ public class ClientHandler extends Thread{
 
             outputStream.writeUTF("Data is received. Write 'start'");
             inputStream.readUTF();
-
             CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> findSum(matrix));
 
             outputStream.writeUTF("Calculation is started, please wait...");
