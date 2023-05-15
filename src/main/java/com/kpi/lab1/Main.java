@@ -7,7 +7,7 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException {
         int n = 45000, m = 45000, numberOfThreads = 128;
-        short[][] array = new short[n][m];
+        int[][] array = new int[n][m];
         Random rand = new Random();
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {

@@ -1,17 +1,22 @@
 package com.kpi.lab4.server;
 
+import com.kpi.lab1.SumThread;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ClientHandler extends Thread{
     private final Socket socket;
+    private final ExecutorService executorService;
     public ClientHandler(Socket socket){
         this.socket = socket;
+        this.executorService = Executors.newFixedThreadPool(3);
     }
 
     @Override
@@ -25,7 +30,13 @@ public class ClientHandler extends Thread{
 
             outputStream.writeUTF("Data is received. Write 'start'");
             inputStream.readUTF();
-            CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> findSum(matrix));
+            CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> {
+                try {
+                    return findSum(matrix);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
 
             outputStream.writeUTF("Calculation is started, please wait...");
             //int sum = findSum(matrix);
@@ -65,17 +76,18 @@ public class ClientHandler extends Thread{
         return matrix;
     }
 
-    private int findSum(int[][] matrix) {
-        try {
-            Thread.sleep(7000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    private int findSum(int[][] matrix) throws InterruptedException {
         int sum = 0;
-        for (int[] ints : matrix) {
-            for (int j = 0; j < matrix[0].length; j++) {
-                sum += ints[j];
-            }
+        SumThread[] sumThread = new SumThread[3];
+        int numRowsPerThread = matrix.length / 3;
+        for (int i = 0; i < 3; i++) {
+            sumThread[i] = new SumThread(matrix, i * numRowsPerThread,
+                    (i == 3 - 1) ? matrix.length : (i + 1) * numRowsPerThread);
+            sumThread[i].start();
+        }
+        for (int i = 0; i < 3; i++) {
+            sumThread[i].join();
+            sum += sumThread[i].getSum();
         }
         return sum;
     }
